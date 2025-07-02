@@ -129,8 +129,7 @@ class TestResultPage extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Revenir à la page d'accueil (HomePage)
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7FDFB8),
