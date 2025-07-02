@@ -148,8 +148,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       _buildInfoCard('Score', _user!.score.toString()),
                       const SizedBox(height: 16),
                       
-                      _buildInfoCard('Rank', ''),
-                      
                       const Spacer(),
                       
                       // Logout button

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'training_page.dart';
 import 'profile_page.dart';
 import 'exercise_page.dart';
+import 'leaderboard_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -153,8 +154,12 @@ class _HomePageState extends State<HomePage> {
               // Déjà sur Home
               break;
             case 1:
-              // Navigation vers Leaderboard
-              print('Navigate to Leaderboard');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LeaderboardPage(),
+                ),
+              );
               break;
             case 2:
               // Navigation vers Profile
