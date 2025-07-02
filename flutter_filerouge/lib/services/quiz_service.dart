@@ -6,7 +6,7 @@ import 'token_manager.dart';
 class QuizService {
   static const String baseUrl = 'https://10.0.2.2:7063';
 
-  static Future<List<Question>> generateQuestions({
+  static Future<Map<String, dynamic>> generateQuestions({
     required int level,
     int? type,
     bool isTest = false,
@@ -43,9 +43,14 @@ class QuizService {
         final jsonData = jsonDecode(response.body);
         final questionsData = jsonData['questions'] as List;
         
-        return questionsData
+        final questions = questionsData
             .map((questionJson) => Question.fromJson(questionJson))
             .toList();
+
+        return {
+          'questions': questions,
+          'questionnaireId': jsonData['id'], // ID du questionnaire pour l'évaluation
+        };
       } else {
         throw Exception('Failed to generate questions: ${response.statusCode}');
       }
