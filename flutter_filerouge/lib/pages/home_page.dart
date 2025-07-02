@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'training_page.dart';
 import 'profile_page.dart';
+import 'exercise_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -108,8 +109,17 @@ class _HomePageState extends State<HomePage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  print('Test selected with difficulty: $selectedDifficulty');
-                  // Navigation vers la page de test
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExercisePage(
+                        difficulty: selectedDifficulty,
+                        type: null, // Pas de type spécifique pour le test
+                        exerciseTitle: 'Test',
+                        isTest: true, // Mode test activé
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7FDFB8),

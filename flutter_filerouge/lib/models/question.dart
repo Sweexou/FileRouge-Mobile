@@ -1,13 +1,13 @@
 class Question {
   final String id;
   final String questionText;
-  final String correctAnswer;
+  final String? correctAnswer; // Peut être null pour les tests
   final int orderInQuiz;
 
   Question({
     required this.id,
     required this.questionText,
-    required this.correctAnswer,
+    this.correctAnswer,
     required this.orderInQuiz,
   });
 
@@ -15,7 +15,7 @@ class Question {
     return Question(
       id: json['id'] ?? '',
       questionText: json['questionText'] ?? '',
-      correctAnswer: json['correctAnswer'] ?? '',
+      correctAnswer: json['correctAnswer'], // Peut être null
       orderInQuiz: json['orderInQuiz'] ?? 0,
     );
   }

@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/question.dart';
 import '../models/quiz_result.dart';
+import '../models/test_answer.dart';
 import '../services/quiz_service.dart';
+import '../services/evaluation_service.dart';
 import 'answer_page.dart';
+import 'test_result_page.dart';
 
 class ExercisePage extends StatefulWidget {
   final String difficulty;
   final int? type;
   final String exerciseTitle;
+  final bool isTest;
 
   const ExercisePage({
     Key? key,
     required this.difficulty,
     this.type,
     required this.exerciseTitle,
+    this.isTest = false,
   }) : super(key: key);
 
   @override
@@ -23,7 +28,9 @@ class ExercisePage extends StatefulWidget {
 
 class _ExercisePageState extends State<ExercisePage> {
   List<Question> _questions = [];
-  List<QuizResult> _results = [];
+  List<QuizResult> _trainingResults = [];
+  List<TestAnswer> _testAnswers = [];
+  String? _questionnaireId;
   int _currentQuestionIndex = 0;
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -56,14 +63,15 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Future<void> _loadQuestions() async {
     try {
-      final questions = await QuizService.generateQuestions(
+      final questionsData = await QuizService.generateQuestions(
         level: _getDifficultyLevel(),
         type: widget.type,
-        isTest: false,
+        isTest: widget.isTest,
       );
 
       setState(() {
-        _questions = questions;
+        _questions = questionsData['questions'];
+        _questionnaireId = questionsData['questionnaireId'];
         _isLoading = false;
       });
     } catch (e) {
@@ -95,14 +103,24 @@ class _ExercisePageState extends State<ExercisePage> {
 
     final userAnswer = _answerController.text.trim();
     final currentQuestion = _questions[_currentQuestionIndex];
-    final isCorrect = userAnswer.toLowerCase() == 
-                     currentQuestion.correctAnswer.toLowerCase();
 
-    _results.add(QuizResult(
-      question: currentQuestion,
-      userAnswer: userAnswer,
-      isCorrect: isCorrect,
-    ));
+    if (widget.isTest) {
+      // Mode Test : stocker les réponses pour évaluation
+      _testAnswers.add(TestAnswer(
+        questionId: currentQuestion.id,
+        answer: userAnswer,
+      ));
+    } else {
+      // Mode Training : vérifier immédiatement
+      final isCorrect = userAnswer.toLowerCase() == 
+                       currentQuestion.correctAnswer?.toLowerCase();
+
+      _trainingResults.add(QuizResult(
+        question: currentQuestion,
+        userAnswer: userAnswer,
+        isCorrect: isCorrect,
+      ));
+    }
 
     _answerController.clear();
 
@@ -115,12 +133,58 @@ class _ExercisePageState extends State<ExercisePage> {
     }
   }
 
-  void _finishExercise() {
+  Future<void> _finishExercise() async {
+    if (widget.isTest) {
+      await _finishTest();
+    } else {
+      _finishTraining();
+    }
+  }
+
+  Future<void> _finishTest() async {
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final evaluationResult = await EvaluationService.evaluateTest(
+        questionnaireId: _questionnaireId!,
+        answers: _testAnswers,
+      );
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TestResultPage(
+              evaluationResult: evaluationResult,
+              exerciseTitle: widget.exerciseTitle,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error evaluating test: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _finishTraining() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => AnswerPage(
-          results: _results,
+          results: _trainingResults,
           exerciseTitle: widget.exerciseTitle,
         ),
       ),
@@ -217,23 +281,47 @@ class _ExercisePageState extends State<ExercisePage> {
                               color: Colors.grey,
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF7FDFB8).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              widget.difficulty,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF7FDFB8),
+                          Row(
+                            children: [
+                              if (widget.isTest)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Text(
+                                    'TEST',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7FDFB8).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  widget.difficulty,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF7FDFB8),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
@@ -346,7 +434,7 @@ class _ExercisePageState extends State<ExercisePage> {
                               : Text(
                                   _currentQuestionIndex < _questions.length - 1
                                       ? 'Next Question'
-                                      : 'Finish Exercise',
+                                      : widget.isTest ? 'Submit Test' : 'Finish Exercise',
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,

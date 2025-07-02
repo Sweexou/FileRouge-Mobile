@@ -177,7 +177,7 @@ class AnswerPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    result.question.correctAnswer,
+                                    result.question.correctAnswer ?? '',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
