@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/login_response.dart';
+import 'token_manager.dart';
 
 class AuthService {
   static const String baseUrl = 'https://10.0.2.2:7063';
@@ -15,8 +16,8 @@ class AuthService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'Identifier': email,  // Changé de 'email' à 'Identifier'
-          'password': password, // Reste 'password' (minuscule)
+          'Identifier': email,
+          'password': password,
         }),
       ).timeout(const Duration(seconds: 10));
 
@@ -25,6 +26,10 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(jsonDecode(response.body));
+        
+        // Sauvegarder le token automatiquement
+        await TokenManager.saveToken(loginResponse.token);
+        
         return {
           'success': true,
           'data': loginResponse,
@@ -43,5 +48,9 @@ class AuthService {
         'error': 'Network error: $e',
       };
     }
+  }
+
+  static Future<void> logout() async {
+    await TokenManager.removeToken();
   }
 }
