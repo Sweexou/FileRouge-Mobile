@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'exercise_page.dart';
 
 class TrainingPage extends StatefulWidget {
   final String difficulty;
@@ -43,8 +44,16 @@ class _TrainingPageState extends State<TrainingPage> {
               description: 'Determine the correct mathematical sign to complete the equation.',
               icon: '×',
               onStart: () {
-                print('Starting Find the Sign with difficulty: ${widget.difficulty}');
-                // Navigation vers l'exercice Find the Sign
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExercisePage(
+                      difficulty: widget.difficulty,
+                      type: 2, // Find the Sign
+                      exerciseTitle: 'Find the Sign',
+                    ),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 20),
@@ -55,8 +64,16 @@ class _TrainingPageState extends State<TrainingPage> {
               description: 'Calculate the result of the given mathematical expression.',
               icon: '📊',
               onStart: () {
-                print('Starting Find the Result with difficulty: ${widget.difficulty}');
-                // Navigation vers l'exercice Find the Result
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExercisePage(
+                      difficulty: widget.difficulty,
+                      type: 0, // Find the Result
+                      exerciseTitle: 'Find the Result',
+                    ),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 20),
@@ -67,8 +84,16 @@ class _TrainingPageState extends State<TrainingPage> {
               description: 'Identify the missing number in the equation to make it true.',
               icon: '6_?7',
               onStart: () {
-                print('Starting Find the Missing Number with difficulty: ${widget.difficulty}');
-                // Navigation vers l'exercice Find the Missing Number
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExercisePage(
+                      difficulty: widget.difficulty,
+                      type: 1, // Find the Missing Number
+                      exerciseTitle: 'Find the Missing Number',
+                    ),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 20),
@@ -79,8 +104,16 @@ class _TrainingPageState extends State<TrainingPage> {
               description: 'Mixed questions combining all three exercise types for comprehensive practice.',
               icon: 'MIX',
               onStart: () {
-                print('Starting Test Training with difficulty: ${widget.difficulty}');
-                // Navigation vers l'exercice Test Training
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExercisePage(
+                      difficulty: widget.difficulty,
+                      type: null, // Mixed questions
+                      exerciseTitle: 'Test Training',
+                    ),
+                  ),
+                );
               },
             ),
             
