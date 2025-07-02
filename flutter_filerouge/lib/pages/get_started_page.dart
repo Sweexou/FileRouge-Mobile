@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_page.dart';
 
 class GetStartedPage extends StatelessWidget {
   const GetStartedPage({Key? key}) : super(key: key);
@@ -67,13 +68,18 @@ class GetStartedPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Bouton Get Started
+                  // Bouton Get Started avec navigation
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigation à implémenter
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF7FDFB8),
