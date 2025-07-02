@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'training_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false, // Retire la flèche de retour
+        automaticallyImplyLeading: false,
         title: const Text(
           'Math App',
           style: TextStyle(
@@ -147,8 +148,13 @@ class _HomePageState extends State<HomePage> {
               break;
             case 2:
               // Navigation vers Profile
-              print('Navigate to Profile');
-              break;
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfilePage(),
+              ),
+            );
+            break;
           }
         },
         type: BottomNavigationBarType.fixed,
