@@ -16,7 +16,6 @@ class UserService {
       }
 
       print('Fetching user data from: $baseUrl/api/user/me');
-      print('Using token: ${token.substring(0, 20)}...'); // Log partiel du token
       
       final response = await http.get(
         Uri.parse('$baseUrl/api/user/me'),
@@ -43,6 +42,104 @@ class UserService {
     } catch (e) {
       print('Error fetching user data: $e');
       return null;
+    }
+  }
+
+  static Future<bool> updateEmail(String newEmail) async {
+    try {
+      final token = await TokenManager.getToken();
+      
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      // Debug du token
+      print('Token length: ${token.length}');
+      print('Token starts with: ${token.substring(0, 20)}...');
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/api/user/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Vérifiez le format
+        },
+        body: jsonEncode({
+          'email': newEmail,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      print('Request headers: ${response.request?.headers}');
+      print('Response status: ${response.statusCode}');
+      print('Response headers: ${response.headers}');
+      print('Response body: ${response.body}');
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating email: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> updateUsername(String newUsername) async {
+    try {
+      final token = await TokenManager.getToken();
+      
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      print('Updating username to: $newUsername');
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/api/user/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'username': newUsername,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating username: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> updatePassword(String currentPassword, String newPassword) async {
+    try {
+      final token = await TokenManager.getToken();
+      
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      print('Updating password');
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/api/user/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating password: $e');
+      return false;
     }
   }
 }
