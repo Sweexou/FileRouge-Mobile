@@ -14,8 +14,6 @@ class UserService {
         print('No token found');
         return null;
       }
-
-      print('Fetching user data from: $baseUrl/api/user/me');
       
       final response = await http.get(
         Uri.parse('$baseUrl/api/user/me'),
@@ -25,22 +23,16 @@ class UserService {
         },
       ).timeout(const Duration(seconds: 10));
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         return User.fromJson(jsonData);
       } else if (response.statusCode == 401) {
-        print('Token expired or invalid, removing token');
         await TokenManager.removeToken();
         return null;
       } else {
-        print('Failed to load user data: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching user data: $e');
       return null;
     }
   }
@@ -52,10 +44,6 @@ class UserService {
       if (token == null) {
         throw Exception('No token found');
       }
-
-      // Debug du token
-      print('Token length: ${token.length}');
-      print('Token starts with: ${token.substring(0, 20)}...');
       
       final response = await http.put(
         Uri.parse('$baseUrl/api/user/me'),
@@ -68,14 +56,8 @@ class UserService {
         }),
       ).timeout(const Duration(seconds: 10));
 
-      print('Request headers: ${response.request?.headers}');
-      print('Response status: ${response.statusCode}');
-      print('Response headers: ${response.headers}');
-      print('Response body: ${response.body}');
-
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating email: $e');
       return false;
     }
   }
@@ -87,8 +69,6 @@ class UserService {
       if (token == null) {
         throw Exception('No token found');
       }
-
-      print('Updating username to: $newUsername');
       
       final response = await http.put(
         Uri.parse('$baseUrl/api/user/me'),
@@ -100,13 +80,8 @@ class UserService {
           'username': newUsername,
         }),
       ).timeout(const Duration(seconds: 10));
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating username: $e');
       return false;
     }
   }
@@ -133,12 +108,8 @@ class UserService {
         }),
       ).timeout(const Duration(seconds: 10));
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating password: $e');
       return false;
     }
   }

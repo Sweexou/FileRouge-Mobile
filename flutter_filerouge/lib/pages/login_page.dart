@@ -38,18 +38,13 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         if (result['success']) {
-          // Récupération du token
+
           final token = result['token'] as String;
   
-          // Stocker le token
+
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', token);
-          
-          // Ici vous pouvez stocker le token pour les futures requêtes
-          // Par exemple avec SharedPreferences
-          print('Login successful! Token: $token');
-          
-          // Login réussi - redirection vers la page d'accueil
+
           if (mounted) {
             Navigator.pushReplacement(
               context,

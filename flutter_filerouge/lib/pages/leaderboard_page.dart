@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_filerouge/pages/home_page.dart';
 import '../models/leaderboard_user.dart';
 import '../services/leaderboard_service.dart';
+import 'profile_page.dart';
 
 class LeaderboardPage extends StatefulWidget {
   const LeaderboardPage({Key? key}) : super(key: key);
@@ -150,17 +152,27 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           setState(() {
             _currentIndex = index;
           });
+          // Navigation selon l'index
           switch (index) {
             case 0:
-              Navigator.pop(context); // Retour à Home
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
               break;
             case 1:
-              // Déjà sur Leaderboard
               break;
             case 2:
               // Navigation vers Profile
-              print('Navigate to Profile');
-              break;
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfilePage(),
+              ),
+            );
+            break;
           }
         },
         type: BottomNavigationBarType.fixed,

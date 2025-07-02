@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_filerouge/pages/home_page.dart';
 import '../models/user.dart';
 import '../services/user_service.dart';
 import '../services/auth_service.dart';
 import 'login_page.dart';
+import 'leaderboard_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -110,7 +112,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Avatar section
                       Center(
                         child: Container(
                           width: 80,
@@ -182,15 +183,26 @@ class _ProfilePageState extends State<ProfilePage> {
           setState(() {
             _currentIndex = index;
           });
+          // Navigation selon l'index
           switch (index) {
             case 0:
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
               break;
             case 1:
-              print('Navigate to Leaderboard');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LeaderboardPage(),
+                ),
+              );
               break;
             case 2:
-              break;
+            break;
           }
         },
         type: BottomNavigationBarType.fixed,
